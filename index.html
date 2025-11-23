@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="th">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>จดหมายพิเศษ</title>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<main class="stage">
+			<div class="scene">
+				<!-- Hero + CTA -->
+				<section class="hero">
+					<h1>I'm Here. I'm Here.</h1>
+					<p>ลองกดที่ซองดูค้าบบ</p>
+					
+				</section>
+				<div class="hearts-root" id="heartsRoot"></div>
+				<div class="envelope" id="envelope" role="button" tabindex="0" aria-label="เปิดซองจดหมาย">
+						<div class="envelope-body">
+							<div class="paper" id="paper">
+								<div class="paper-inner">
+									<h2 class="paper-title" id="paperTitle">To <span id="recipient">ICE</span></h2>
+									<p class="paper-text" id="paperText">ดีใจที่เค้าได้เจอเธอนะ พร้อมยัง!!!</p>
+									<!-- countdown placeholder (shown after opening) -->
+									<div id="countdown" class="countdown" aria-live="polite" aria-atomic="true" hidden></div>
+								</div>
+							</div>
+						</div>
+						<div class="envelope-flap"></div>
+					</div>
+					
+					</div>
+
+						<div id="confetti-root" class="confetti-root" aria-hidden="true"></div>
+					
+						<!-- sparkles (decorative) -->
+						<div id="sparklesRoot"></div>
+			</main>
+
+			<script src="script.js"></script>
+			<script>
+			  // Hook start button to open the envelope and spawn some hearts/sparkles
+			  (function(){
+			    const start = document.getElementById('startBtn');
+			    const envelope = document.getElementById('envelope');
+			    const heartsRoot = document.getElementById('heartsRoot');
+			    const sparklesRoot = document.getElementById('sparklesRoot');
+			    if(start && envelope){
+			      start.addEventListener('click', ()=>{ envelope.click(); spawnBurst(); });
+			    }
+			    function spawnHeart(){
+			      if(!heartsRoot) return;
+			      const el = document.createElement('div'); el.className='heart'; el.textContent='❤';
+			      const left = 20 + Math.random()*60; el.style.left = left+'%';
+			      el.style.top = '70%'; el.style.color = '#ff6aa6'; el.style.fontSize = (12 + Math.random()*18)+'px';
+			      el.style.opacity = '0';
+			      heartsRoot.appendChild(el);
+			      const dur = 2200 + Math.random()*800;
+			      el.style.animation = `floatUp ${dur}ms linear forwards`;
+			      setTimeout(()=>{ try{ heartsRoot.removeChild(el); }catch(e){} }, dur+120);
+			    }
+			    function spawnSparkle(){
+			      if(!sparklesRoot) return;
+			      const s = document.createElement('div'); s.className='sparkle';
+			      const left = Math.random()*96; const top = Math.random()*60 + 8;
+			      s.style.left = left + '%'; s.style.top = top + '%';
+			      s.style.animation = `twinkle ${800 + Math.random()*800}ms ease-in-out forwards`;
+			      sparklesRoot.appendChild(s);
+			      setTimeout(()=>{ try{ sparklesRoot.removeChild(s); }catch(e){} }, 1600);
+			    }
+			    function spawnBurst(){
+			      for(let i=0;i<6;i++){ setTimeout(spawnHeart, i*120); }
+			      for(let i=0;i<8;i++){ setTimeout(spawnSparkle, i*80); }
+			    }
+			    // gentle continuous background sparkles
+			    setInterval(()=>{ spawnSparkle(); }, 1400);
+			  })();
+			</script>
+		</body>
+	</html>

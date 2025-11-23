@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>จีบคุณ — ICE</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      :root{--accent:#ff4d85}
+      body{background: radial-gradient(circle at 10% 20%, #fff0f6, transparent 6%), linear-gradient(90deg,#ffeef6 0%, #fff9ec 50%, #ffeef6 100%);font-family: "Segoe UI", Roboto, "Noto Sans", sans-serif}
+      .proposal-stage{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:36px}
+      .card{
+        width:640px;
+        max-width:92%;
+        background:linear-gradient(180deg, #fff, #fffefc);
+        border-radius:20px;
+        padding:36px 48px;
+        box-shadow: 0 40px 80px rgba(255,125,160,0.14), 0 12px 40px rgba(6,10,20,0.06);
+        text-align:center;
+        position:relative;z-index:1;overflow:visible
+      }
+      .card:after{content:"";position:absolute;inset:auto -18px -18px -18px;border-radius:20px;box-shadow:0 0 60px rgba(255,120,160,0.22);opacity:0.95}
+      /* decorative faint heart behind the card */
+      .card::before{content:"❤";position:absolute;right:-40px;top:-40px;font-size:140px;color:rgba(255,80,140,0.06);transform:rotate(-10deg);z-index:0;pointer-events:none}
+      .card > *{position:relative;z-index:2}
+      .title{font-size:36px;color:var(--accent);font-weight:900;margin:6px 0}
+      .subtitle{margin:10px 0 22px;color:#ff5b95;font-weight:800;font-size:18px}
+      .actions{display:flex;gap:22px;justify-content:center;margin-top:12px}
+    .btn-accept{background:linear-gradient(180deg,#ff6aa6,#ff4d85);color:#fff;border:0;padding:16px 40px;border-radius:32px;font-weight:800;box-shadow:0 18px 40px rgba(255,90,140,0.32);cursor:pointer;font-size:18px}
+  .btn-accept{background:linear-gradient(180deg,#ff6aa6,#ff4d85);color:#fff;border:0;padding:16px 40px;border-radius:32px;font-weight:800;box-shadow:0 18px 40px rgba(255,90,140,0.32);cursor:pointer;transform-origin:center;transition:transform 80ms cubic-bezier(.2,.9,.25,1)}
+      .btn-decline{background:transparent;border:2px solid rgba(255,80,140,0.18);padding:14px 36px;border-radius:28px;color:#ff4d85;font-weight:800;cursor:pointer;font-size:16px}
+      .btn-accept:active{transform:translateY(2px)}
+      .small-note{margin-top:18px;color:#b44974;font-size:16px}
+      .back-small{margin-top:12px;border:none;background:transparent;color:#c66b95;cursor:pointer}
+      /* floating corner back button */
+      .corner-back{
+        position:fixed;top:18px;left:18px;z-index:120;display:inline-flex;align-items:center;justify-content:center;
+        width:48px;height:48px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,240,250,0.9));
+        box-shadow:0 8px 20px rgba(255,120,160,0.14);border:1px solid rgba(255,80,140,0.08);cursor:pointer;font-weight:700;color:var(--accent)
+      }
+      .corner-back:active{transform:translateY(1px)}
+  /* modal styles */
+  .modal-overlay{position:fixed;inset:0;background:linear-gradient(180deg,rgba(6,10,20,0.35),rgba(255,240,250,0.15));display:none;align-items:center;justify-content:center;z-index:220}
+  .modal-overlay.open{display:flex}
+  .modal-card{width:min(560px,92%);background:linear-gradient(180deg,#fff,#fff9fb);border-radius:16px;padding:22px 24px;box-shadow:0 30px 60px rgba(255,110,150,0.12);text-align:left;color:#4a2033}
+  .modal-title{font-size:20px;color:var(--accent);font-weight:800;margin-bottom:8px}
+  .modal-body{font-size:15px;line-height:1.5;color:#6b3350;margin-bottom:14px}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px}
+  .modal-close{background:linear-gradient(180deg,#ff84a8,#ff5b95);color:#fff;border:0;padding:8px 14px;border-radius:12px;font-weight:700;cursor:pointer}
+  /* top floating hint card (appears when clicking decline) */
+  .top-card{
+    position:fixed;left:50%;top:-60px;transform:translateX(-50%);
+    min-width:300px;max-width:86%;background:linear-gradient(180deg,#fff,#fff8fb);
+    border-radius:14px;padding:12px 14px;box-shadow:0 22px 60px rgba(6,10,20,0.14);
+    opacity:0;pointer-events:none;z-index:240;transition:top 360ms cubic-bezier(.2,.9,.25,1),opacity 260ms,transform 260ms;display:flex;align-items:center;gap:12px
+  }
+  .top-card.open{top:28px;opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+  .top-card .icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ffedf7,#ffdff0);color:var(--accent);font-weight:900;flex:0 0 44px;box-shadow:inset 0 2px 0 rgba(255,255,255,0.6)}
+  .top-card .content{flex:1}
+  .top-card .text{font-weight:800;color:#51233a;font-size:15px;margin:0}
+  .top-card .sub{font-size:13px;color:#7a4a62;margin-top:4px;opacity:0.95}
+  .top-card .close-small{background:transparent;border:0;font-size:16px;color:#c66b95;cursor:pointer;margin-left:8px}
+  @media (max-width:520px){.card::before{right:-18px;top:-18px;font-size:92px}.card{padding:24px}.top-card{left:8%;transform:none;top:-80px}.top-card.open{left:50%;transform:translateX(-50%);} }
+
+  /* Additional responsive tweaks for proposal page (override inline defaults where needed) */
+  @media (max-width:900px){
+    .card{width:88%;padding:28px}
+    .title{font-size:30px}
+    .subtitle{font-size:16px}
+  }
+  @media (max-width:520px){
+    .card{width:96%;padding:18px}
+    .title{font-size:22px}
+    .subtitle{font-size:14px}
+    .modal-card{width:92%;padding:18px}
+    .modal-title{font-size:18px}
+    .modal-body{font-size:14px}
+    .btn-accept{padding:10px 18px;font-size:15px}
+    .btn-decline{padding:10px 16px;font-size:14px}
+    .top-card{left:6%;right:6%;transform:none}
+  }
+
+  @media (max-width:380px){
+    .card{padding:14px}
+    .title{font-size:20px}
+    .modal-body{font-size:13px}
+  }
+    </style>
+  </head>
+  <body>
+    <main class="proposal-stage">
+      <div class="card" role="main">
+        <div class="title">TO ICE</div>
+        <div class="subtitle">เราลองคุยกันมั้ยคะ? 🥺 💕</div>
+        <div class="actions">
+          <button id="accept" class="btn-accept">OK ❤</button>
+          <button id="decline" class="btn-decline">ขอคิดก่อน</button>
+        </div>
+        <div class="small-note">❤❤❤❤❤❤❤</div>
+      
+      </div>
+    </main>
+
+    <!-- floating back button in corner -->
+    <button id="cornerBack" class="corner-back" aria-label="กลับหน้าแรก">←</button>
+
+    <!-- feelings modal (hidden by default) -->
+    <div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal-card" role="document">
+        <div class="modal-title">TO ICE</div>
+        <div class="modal-body">เค้าดีใจที่ได้เจอเธอนะคะ เธอน่ารักมากๆ พลังงานดีมากๆ เค้าสบายใจเวลาได้คุยกับเธอได้เป็นตัวเองสุดๆ อยากเล่าเรื่องที่เจอเเต่ละวันให้เธอฟัง ขอให้เค้าได้ลองดูเเลเธอหน่อยนะครับ❤ </div>
+        <div class="modal-actions"><button id="modalClose" class="modal-close">❤</button></div>
+      </div>
+    </div>
+
+    <!-- top floating card for decline responses -->
+    <div id="topCard" class="top-card" aria-hidden="true">
+      <div class="icon">❤</div>
+      <div class="content">
+        <div class="text" id="topCardText">หื้มม ทำดีๆ</div>
+        <div class="sub" id="topCardSub">หื้มม ทำดีๆค่ะ</div>
+      </div>
+      <button id="topCardClose" class="close-small" aria-label="ปิด">✕</button>
+    </div>
+
+    <div id="confetti-root" class="confetti-root" aria-hidden="true"></div>
+
+    <script>
+      function launchConfettiLocal(){
+        const root = document.getElementById('confetti-root');
+        const colors = ['#ff6b6b','#ffd166','#ff9fc2','#ffc0e8','#ffb4c0'];
+        const count = 90;
+        for(let i=0;i<count;i++){
+          const el = document.createElement('div'); el.className='confetti';
+          const size = 6 + Math.random()*14; el.style.width=size+'px'; el.style.height=(size*1.6)+'px';
+          el.style.background = colors[Math.floor(Math.random()*colors.length)];
+          el.style.left = (8 + Math.random()*84) + '%'; el.style.top = (Math.random()*32) + '%'; el.style.opacity = (0.85 - Math.random()*0.45);
+          el.style.borderRadius = (Math.random()*4) + 'px'; root.appendChild(el);
+          const dx=(Math.random()*2-1)*260; const dy=360+Math.random()*300; const rot=(Math.random()*360);
+          el.animate([{transform:'translate(0,0) rotate(0deg)',opacity:el.style.opacity},{transform:`translate(${dx}px, ${dy}px) rotate(${rot}deg)`,opacity:0.2}],{duration:1400+Math.random()*1600,easing:'cubic-bezier(.2,.7,.2,1)',iterations:1});
+          setTimeout(()=>{ try{ root.removeChild(el); }catch(e){} }, 3200);
+        }
+      }
+      // incremental growth when clicking "ไม่รัก" (one small step per click)
+  let currentScale = 1;
+  const acceptBtn = document.getElementById('accept');
+  const declineBtn = document.getElementById('decline');
+  // made larger and quicker per user's request
+  const MAX_SCALE = 5.0; // maximum allowed scale (bigger)
+  const SCALE_STEP = 0.4; // how much to grow per click (larger step)
+
+      function incrementScaleOnce(){
+        // increase scale by a fixed step (clamped)
+        currentScale = Math.min(MAX_SCALE, +(currentScale + SCALE_STEP).toFixed(3));
+        acceptBtn.style.transform = `scale(${currentScale})`;
+      }
+
+      function resetScale(){
+        currentScale = 1;
+        // animate back to normal and ensure decline button is enabled
+        acceptBtn.style.transform = 'scale(1)';
+        // in case decline was disabled earlier, re-enable it
+        if(declineBtn) declineBtn.disabled = false;
+      }
+
+      document.getElementById('accept').addEventListener('click', ()=>{
+        // accept: reset size and celebrate; allow repeated clicks (short debounce)
+        if(acceptBtn.disabled) return; // guard against rapid double-clicks
+        acceptBtn.disabled = true;
+        resetScale();
+          launchConfettiLocal();
+          // show feelings modal
+          showModal();
+        const prevText = acceptBtn.textContent;
+        acceptBtn.textContent = 'OK ❤';
+        // re-enable after the celebration so user can click again
+        setTimeout(()=>{
+          acceptBtn.disabled = false;
+          acceptBtn.textContent = 'OK ❤';
+          // ensure decline is available again
+          if(declineBtn) declineBtn.disabled = false;
+        }, 1200);
+      });
+
+        // modal show/hide helpers
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalClose = document.getElementById('modalClose');
+        function showModal(){
+          if(!modalOverlay) return;
+          modalOverlay.classList.add('open');
+          modalOverlay.setAttribute('aria-hidden','false');
+          // focus close button for accessibility
+          if(modalClose) modalClose.focus();
+        }
+        function hideModal(){
+          if(!modalOverlay) return;
+          modalOverlay.classList.remove('open');
+          modalOverlay.setAttribute('aria-hidden','true');
+        }
+        if(modalClose) modalClose.addEventListener('click', hideModal);
+        if(modalOverlay) modalOverlay.addEventListener('click', (e)=>{ if(e.target===modalOverlay) hideModal(); });
+        // top-card random messages for decline clicks
+        const topCard = document.getElementById('topCard');
+        const topCardText = document.getElementById('topCardText');
+        const declinePhrases = [
+          'เธอคะม่ายตลกกก',
+          'อีกรอบนี่ไม่ควรคับ',
+          'ให้โอกาสอีกทีค่ะ',
+          'คิดอีกทีค้าบบบบบ',
+          'ใจเย็นๆ นะคะ',
+          'กดปุ่มข้างๆสิค้าบ',
+        
+        ];
+        let topCardTimer = null;
+        let lastPhraseIndex = -1;
+        const topCardClose = document.getElementById('topCardClose');
+        const topCardSub = document.getElementById('topCardSub');
+        function showTopCard(msg, sub){
+          if(!topCard || !topCardText) return;
+          topCardText.textContent = msg;
+          if(sub && topCardSub) topCardSub.textContent = sub;
+          // force reflow to restart transition if already open
+          topCard.classList.remove('open');
+          void topCard.offsetWidth;
+          topCard.classList.add('open');
+          topCard.setAttribute('aria-hidden','false');
+          if(topCardTimer) clearTimeout(topCardTimer);
+          topCardTimer = setTimeout(()=>{ hideTopCard(); }, 2600);
+        }
+        function hideTopCard(){
+          if(!topCard) return;
+          topCard.classList.remove('open');
+          topCard.setAttribute('aria-hidden','true');
+          if(topCardTimer){ clearTimeout(topCardTimer); topCardTimer = null; }
+        }
+        if(topCardClose) topCardClose.addEventListener('click', hideTopCard);
+
+        document.getElementById('decline').addEventListener('click', ()=>{
+          // incrementally enlarge the accept button on each click
+          incrementScaleOnce();
+          // choose a random phrase, avoid immediate repeats
+          let idx = Math.floor(Math.random()*declinePhrases.length);
+          if(declinePhrases.length > 1 && idx === lastPhraseIndex){ idx = (idx + 1) % declinePhrases.length; }
+          lastPhraseIndex = idx;
+          showTopCard(declinePhrases[idx]);
+        });
+      // corner back button
+      const corner = document.getElementById('cornerBack');
+      if(corner) corner.addEventListener('click', ()=>{ window.location.href='index.html'; });
+    </script>
+  </body>
+</html>
